@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AJ Prints - Notice Board</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      background: #f9f9f9;
+    }
+
+    /* Navigation bar */
+    .navbar {
+      background: #2e8b57;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      margin: 0 20px;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    /* Page content */
+    .container {
+      padding: 40px;
+      text-align: center;
+    }
+
+    /* Notice box styling */
+    .notice {
+      border: 2px solid #e74c3c;
+      background: #fdecea;
+      color: #c0392b;
+      padding: 20px;
+      border-radius: 8px;
+      display: inline-block;
+      max-width: 600px;
+      margin: 20px auto;
+      font-size: 16px;
+      line-height: 1.5;
+      text-align: left;
+    }
+
+    .notice h2 {
+      margin-top: 0;
+    }
+
+    .loading {
+      font-size: 18px;
+      color: #555;
+    }
+
+    /* Create Notice button */
+    #createNoticeBtn {
+      background: #2e8b57;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      margin: 20px 0;
+    }
+
+    #createNoticeBtn:hover {
+      background: #246b45;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <div class="navbar">
+    <a href="index.html">Home</a>
+    <a href="preview.html">Preview</a>
+    <a href="employees.html">Employees</a>
+    <a href="order.html">Order</a>
+  </div>
+
+  <!-- Create Notice button (outside the container) -->
+  <div style="text-align:center; margin-top:20px;">
+    <button id="createNoticeBtn">Create Notice</button>
+  </div>
+
+  <!-- Page content -->
+  <div class="container">
+    <div class="loading">Loading notices...</div>
+  </div>
+
+  <script>
+    const container = document.querySelector('.container');
+
+    // GitHub repo info
+    const owner = 'asher37'; // your GitHub username
+    const repo = 'robodudebook'; // your repo name
+
+    // Create Notice button
+    const createBtn = document.getElementById('createNoticeBtn');
+    createBtn.addEventListener('click', () => {
+      window.open(`https://github.com/${owner}/${repo}/issues/new`, '_blank');
+    });
+
+    // Fetch open issues from GitHub API
+    fetch(`https://api.github.com/repos/${owner}/${repo}/issues`)
+      .then(res => res.json())
+      .then(issues => {
+        container.innerHTML = ''; // clear loading
+
+        if(issues.length === 0){
+          container.innerHTML = '<p>No notices at this time.</p>';
+        }
+
+        issues.forEach(issue => {
+          const noticeDiv = document.createElement('div');
+          noticeDiv.classList.add('notice');
+          noticeDiv.innerHTML = `<h2>${issue.title}</h2><p>${issue.body}</p>`;
+          container.appendChild(noticeDiv);
+        });
+      })
+      .catch(err => {
+        container.innerHTML = '<p>Failed to load notices. Please try again later.</p>';
+        console.error(err);
+      });
+  </script>
+
+</body>
+</html>
